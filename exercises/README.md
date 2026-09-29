@@ -66,10 +66,10 @@ exercises/
 | type | 보는 것 | 칸 |
 |---|---|---|
 | `sheet_exists` | 시트가 있나 | `sheet` |
-| `cell_equals` | 칸의 값(수식이면 계산값)이 기대값과 같나 | `sheet` `cell` `expect` 또는 `expect_from` · `tolerance`(선택) · `source_note`(기대값을 어떻게 셌는지 한 줄) |
-| `cell_is_formula` | 칸에 수식이 있나 · 특정 함수가 들어 있나 | `sheet` `cell` `functions`(선택) |
-| `cell_is_constant` | 칸이 수식이 아니라 손으로 적은 값인가(21.1 「기준은 숫자로」) | `sheet` `cell` |
-| `range_same_as_source` | 범위가 원본과 같은가 — 값 칸은 값으로, 수식 칸은 수식 글자로 댄다 | `sheet` `range` `source` `source_sheet`(선택) |
+| `cell_equals` | 셀의 값(수식이면 계산값)이 기대값과 같나 | `sheet` `cell` `expect` 또는 `expect_from` · `tolerance`(선택) · `source_note`(기대값을 어떻게 셌는지 한 줄) |
+| `cell_is_formula` | 셀에 수식이 있나 · 특정 함수가 들어 있나 | `sheet` `cell` `functions`(선택) |
+| `cell_is_constant` | 셀이 수식이 아니라 손으로 적은 값인가(21.1 「기준은 숫자로」) | `sheet` `cell` |
+| `range_same_as_source` | 범위가 원본과 같은가 — 값 셀은 값으로, 수식 셀은 수식 글자로 댄다 | `sheet` `range` `source` `source_sheet`(선택) |
 | `practice_untouched` | practice 원본이 처음 받은 그대로인가(지문 대조) | `file` |
 | `same_bytes_as` | 제출 파일이 어떤 파일과 바이트까지 같은가(사본·복원 확인) | `file` |
 | `font_bold` · `number_format` · `fill_present` | 범위 전체가 굵게 · 그 표시 형식 · 채우기 색이 있나 | `sheet` `range` (`format`) |
@@ -89,7 +89,7 @@ exercises/
 
 ★ **기대값을 check.json 에 숫자로 박지 않습니다.** 채점기가 practice 원본 자료에서 직접 계산하게 적습니다.
 정답 파일에서 값을 거꾸로 읽어 기대값을 맞추는 일이 없게 하려는 것입니다.
-그래서 원본의 **수식 칸**을 재료로 쓰면 채점기가 규칙 오류(?)를 냅니다. 입력 칸(손으로 적은 값)에서 계산하도록 적어야 합니다.
+그래서 원본의 **수식 셀**을 재료로 쓰면 채점기가 규칙 오류(?)를 냅니다. 입력 셀(손으로 적은 값)에서 계산하도록 적어야 합니다.
 
 ```json
 "expect_from": {
@@ -103,12 +103,12 @@ exercises/
 
 | op | 계산 | 칸 |
 |---|---|---|
-| `cell` | 칸 하나의 값 | `cell` |
-| `sum` · `count` · `count_distinct` | 범위의 합 · 빈칸 아닌 칸 수 · 서로 다른 값의 수 | `range` `where`(선택) `normalize`(count_distinct) |
+| `cell` | 셀 하나의 값 | `cell` |
+| `sum` · `count` · `count_distinct` | 범위의 합 · 빈칸 아닌 셀 수 · 서로 다른 값의 수 | `range` `where`(선택) `normalize`(count_distinct) |
 | `sumproduct` | 여러 범위를 행마다 곱해 더한다(예: 수량×단가) | `ranges` `where`(선택) |
 | `lookup` | 한 범위에서 값을 찾아 같은 줄의 다른 값 | `key_range` `return_range` `equals` |
 | `sheet_count` · `defined_name_count` | 시트 수 · (숨김 아닌) 이름 정의 수 | — |
-| `defined_name_value` | 이름 정의가 가리키는 값(고정값이든 칸이든) | `name` |
+| `defined_name_value` | 이름 정의가 가리키는 값(고정값이든 셀이든) | `name` |
 
 `where` 는 여러 개를 겹칠 수 있고(모두 만족하는 줄만), 줄 수가 계산 범위와 같아야 합니다.
 조건: `equals`(같다) · `not_blank`(빈칸 아님) · `gte` `gt` `lte` `lt`(크기 비교). `normalize` 는 `strip`(앞뒤 공백 빼기) · `remove_spaces`(공백 모두 빼기).
@@ -128,11 +128,11 @@ exercises/
 
 ### 계산값이 없을 때
 
-제출 파일의 수식 칸에 계산값이 없거나, 파일에 «열 때 다시 계산» 표시가 붙어 있으면 그 항목은 ✗ 가 아니라 `!` 로 나옵니다.
+제출 파일의 수식 셀에 계산값이 없거나, 파일에 «열 때 다시 계산» 표시가 붙어 있으면 그 항목은 ✗ 가 아니라 `!` 로 나옵니다.
 「엑셀에서 한 번 열고 저장한 뒤 다시 채점하세요」라는 안내가 붙습니다.
 
 ### 새 규칙 종류를 더할 때
 
 1. `grader/check.py` 에 `rule_…` 함수 하나를 더하고 `RULES`(글 파일이면 `TEXT_RULES`)에 이름을 올린다.
-2. `grader/test_check.py` 에 **맞는 파일은 ✓, 겨눈 것만 틀린 파일은 ✗** 두 쪽 시험을 같이 넣는다.
+2. `grader/test_check.py` 에 **맞는 파일은 ✓, 겨눈 것만 틀린 파일은 ✗** 두 쪽 테스트를 같이 넣는다.
 3. 이 표에 한 줄을 더한다.
